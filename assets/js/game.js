@@ -20,3 +20,51 @@ Game: "this is our main game object, contains and scopes everything",
         takeDamage:
 
 */
+
+var game = {
+    fightpit: {
+        playerMech: "",
+        defender: "",
+        attackPhase: function(attacker, defender){
+
+        },
+        setDefender: function(who){
+
+        }
+    },
+    player: {
+        health: 0,
+        attackPwr: 0,
+        counterPwr: 0,
+        increasePwr: function(){
+
+        }
+    },
+    defender: {
+        health: 0,
+        arrackPwr: 0,
+        counterPwr: 0
+    },
+    mechs: ["slugtosser", "gobstomper", "atomsmasher", "pwnicator"],
+    restart: function(){},
+    startGame: function(chosenMech){
+        this.moveMech("#"+chosenMech, "#yourmech");
+        
+    },
+    printMssg: function(mssg){
+        $("#message").html(mssg);
+    },
+    moveMech: function(what, where){
+        $(where).append($(what))
+    },
+    takeDamage: function(who, howMuch){
+
+    },
+    attack: function(player, defender){
+
+    }
+}
+
+$(".mech").on("click", function(){
+    game.startGame($(this).attr("id"));
+});
