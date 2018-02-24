@@ -1,6 +1,26 @@
 /* * {
     outline: 1px solid green;
 } */
+body {
+    background: black;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+}
+
+h2 {
+    font-size: 19px;
+}
+
+.spacy {
+    font-family: 'Audiowide', cursive;
+}
+
+.computer {
+    font-family: 'Press Start 2P', cursive;
+    margin: 2em 0;
+    font-size: 36px;
+    color: white;
+}
 
 .dropship {
     background: lightblue;
@@ -26,7 +46,8 @@
 }
 
 .enemyarea {
-    background: lightgray;
+    background: darkblue;
+    color: white;
 }
 
 #controls {
@@ -47,6 +68,15 @@
 .mech-image {
     width: 100%;
     display: block;
+}
+
+#defender .mech .mech-image {
+    -moz-transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+        filter: FlipH;
+        -ms-filter: "FlipH";
 }
 
 .btn {
