@@ -103,7 +103,7 @@ var game = {
     },
     setMech: function(mechName, entity){
         var $mech = $("#" + mechName);
-        console.log(mechName);
+        // console.log(mechName);
         entity.mech = mechName;
         entity.health = parseInt($mech.find(".health").html())
         entity.attackPwr = parseInt($mech.find(".attackpwr").html())
