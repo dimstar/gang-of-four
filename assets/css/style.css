@@ -25,10 +25,6 @@
     margin-bottom: 3em;
 }
 
-#attack {
-    display: none;
-}
-
 .enemyarea {
     background: lightgray;
 }
@@ -38,11 +34,14 @@
 }
 
 #message {
-    color: white;
+    color: red;
     padding: 18px;
     text-align: center;
     width: 100%;
+    margin: 2em 0;
     font-size: 18px;
+    background: white;
+    font-weight: 900;
 }
 
 .mech-image {

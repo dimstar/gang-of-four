@@ -25,16 +25,18 @@ var game = {
     player: {
         mech: "",
         health: 0,
+        basePwr: 0,
         attackPwr: 0,
         counterPwr: 0,
         increasePwr: function(){
-
+            this.basePwr = (this.basePwr === 0) ? this.attackPwr : this.basePwr ;
+            this.attackPwr = this.attackPwr + this.basePwr;
         }
     },
     defender: {
         mech: "",
         health: 0,
-        arrackPwr: 0,
+        attackPwr: 0,
         counterPwr: 0
     },
     mechs: ["slugtosser", "gobstomper", "atomsmasher", "pwnicator"],
@@ -53,6 +55,8 @@ var game = {
         });
     },
     startEncounter: function(defender){
+        if($("#defender .mech").length !== 0) return;
+
         this.moveMech(defender, "#defender");
         this.setMech(defender, this.defender);
         this.printMssg("Attack the defender to start!")
@@ -61,9 +65,30 @@ var game = {
         // bind click to attack button
         $("#attack").on("click", function(){
             // player attacks
-            game.attack( game.player.mech, game.defender.mech );
+            var hitmssg1 = game.attack( game.player, game.defender );
+            // increase attack power
+            game.player.increasePwr();
             // defender counter attacks
-            game.attack( game.player.mech, game.defender.mech );
+            var hitmssg2 = game.attack( game.defender, game.player );
+            
+            // check who died?
+            var died = game.whoDied( game.defender, game.player );
+
+            switch(died){
+                case game.player.mech:
+                    game.printMssg(`Your mech, ${game.player.mech} has been destroyed! \n Restart to lose again!`);
+                    game.unbindElement("#attack");
+                    $("#" + game.player.mech).remove();
+                    game.allowRestart()
+                    break;
+                case game.defender.mech:
+                    game.printMssg(`${game.defender.mech} has been destroyed! \n select another oponent, boss!`);
+                    game.winState();
+                    break;
+                default: 
+                    game.printMssg(hitmssg1 +" "+ hitmssg2);
+                    game.updateFront()
+            }
         });
     },
     printMssg: function(mssg){
@@ -72,11 +97,9 @@ var game = {
     moveMech: function(what, where){
         $(where).append($("#"+what));
     },
-    takeDamage: function(who, howMuch){
-
-    },
     attack: function(attacker, defender){
-        
+        defender.health = defender.health - attacker.attackPwr;
+        return `${attacker.mech} hit ${defender.mech} for ${attacker.attackPwr} damage!`;
     },
     setMech: function(mechName, entity){
         var $mech = $("#" + mechName);
@@ -84,11 +107,31 @@ var game = {
         entity.mech = mechName;
         entity.health = parseInt($mech.find(".health").html())
         entity.attackPwr = parseInt($mech.find(".attackpwr").html())
-        entity.counterPwr = parseInt($mech.find(".attackpwr").html())
+        entity.counterPwr = (parseInt($mech.find(".attackpwr").html())*2)
+
+        if(this.player.mech !== mechName){
+            entity.attackPwr = entity.counterPwr
+        }
+
         this.unbindElement("#" + mechName);
     },
-    die: function(who){
-        
+    whoDied: function(player, defender){
+        if(player.health <= 0){
+            return player.mech;
+        }else if(defender.health <= 0 ){
+            return defender.mech;
+        }else{
+            return false;
+        }
+    },
+    winState: function(){
+        if($("#enemies .mech").length > 0){
+            $("#" + game.defender.mech).remove();
+        }else{
+            $("#" + game.defender.mech).remove();
+            this.printMssg("You won boss!!");
+            this.allowRestart()
+        }
     },
     makeEnemies: function(playerMech){
         var i = this.mechs.indexOf(playerMech);
@@ -100,11 +143,25 @@ var game = {
             $("#enemies").append($("#"+element));
         })
     },
-    restart: function(){
+    allowRestart: function(){
         //reset everything
+        $("#restart").show();
+        $("#restart").on("click", function(){
+            location.reload();
+        })
     },
     unbindElement: function(element){
         $(element).unbind("click")
+    },
+    updateFront: function(){
+        var uiDefender = $("#defender .mech")
+        var uiPlayer = $("#yourmech .mech")
+        
+        uiPlayer.find(".health").html(this.player.health);
+        uiPlayer.find(".attackpwr").html(this.player.attackPwr);
+
+        uiDefender.find(".health").html(this.defender.health)
+        uiDefender.find(".attackpwr").html(this.defender.attackPwr)
     }
 }
 
