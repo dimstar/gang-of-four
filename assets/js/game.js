@@ -22,17 +22,8 @@ Game: "this is our main game object, contains and scopes everything",
 */
 
 var game = {
-    fightpit: {
-        playerMech: "",
-        defender: "",
-        attackPhase: function(attacker, defender){
-
-        },
-        setDefender: function(who){
-
-        }
-    },
     player: {
+        mech: "",
         health: 0,
         attackPwr: 0,
         counterPwr: 0,
@@ -41,29 +32,86 @@ var game = {
         }
     },
     defender: {
+        mech: "",
         health: 0,
         arrackPwr: 0,
         counterPwr: 0
     },
     mechs: ["slugtosser", "gobstomper", "atomsmasher", "pwnicator"],
-    restart: function(){},
+    enemies: [],
     startGame: function(chosenMech){
-        this.moveMech("#"+chosenMech, "#yourmech");
+        this.unbindElement(".mech"); //clear mech click bindings
+
+        this.moveMech( chosenMech, "#yourmech");
+        this.makeEnemies(chosenMech);
+        this.moveEnemies(this.enemies);
+        this.setMech(chosenMech, this.player);
+        this.printMssg("Select a mech to be your enemy!");
         
+        $("#enemies .mech").on("click", function(){
+            game.startEncounter( $(this).attr("id") );
+        });
+    },
+    startEncounter: function(defender){
+        this.moveMech(defender, "#defender");
+        this.setMech(defender, this.defender);
+        this.printMssg("Attack the defender to start!")
+        
+        $("#attack").show();
+        // bind click to attack button
+        $("#attack").on("click", function(){
+            // player attacks
+            game.attack( game.player.mech, game.defender.mech );
+            // defender counter attacks
+            game.attack( game.player.mech, game.defender.mech );
+        });
     },
     printMssg: function(mssg){
         $("#message").html(mssg);
     },
     moveMech: function(what, where){
-        $(where).append($(what))
+        $(where).append($("#"+what));
     },
     takeDamage: function(who, howMuch){
 
     },
-    attack: function(player, defender){
-
+    attack: function(attacker, defender){
+        
+    },
+    setMech: function(mechName, entity){
+        var $mech = $("#" + mechName);
+        console.log(mechName);
+        entity.mech = mechName;
+        entity.health = parseInt($mech.find(".health").html())
+        entity.attackPwr = parseInt($mech.find(".attackpwr").html())
+        entity.counterPwr = parseInt($mech.find(".attackpwr").html())
+        this.unbindElement("#" + mechName);
+    },
+    die: function(who){
+        
+    },
+    makeEnemies: function(playerMech){
+        var i = this.mechs.indexOf(playerMech);
+        this.enemies = this.mechs; // copy the main mechs and set enemies
+        this.enemies.splice(i, 1); // make enemies, grr
+    },
+    moveEnemies: function(enemies){
+        enemies.forEach(function(element){
+            $("#enemies").append($("#"+element));
+        })
+    },
+    restart: function(){
+        //reset everything
+    },
+    unbindElement: function(element){
+        $(element).unbind("click")
     }
 }
+
+// Call to action!
+game.printMssg("Select a mech!")
+$("#attack").hide();
+$("#restart").hide();
 
 $(".mech").on("click", function(){
     game.startGame($(this).attr("id"));
